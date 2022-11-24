@@ -179,10 +179,12 @@ type PartialField<F> =
   : F extends Array<infer U> ? Array<PartialField<U>>
   : F extends ReadonlyArray<infer U> ? ReadonlyArray<PartialField<U>>
   : F extends Message<infer U> ? PartialMessage<U>
-  : F extends OneofSelectedMessage<infer C, infer V> ? {case: C; value: PartialMessage<V>}
-  : F extends { case: string | undefined; value?: unknown; } ? F
+  : F extends OneofSelectedMessage<infer C, infer V> ? OneofUndefined | {case: C; value: PartialMessage<V>}
+  : F extends { case: string | undefined; value?: unknown; } ? OneofUndefined | F
   : F extends {[key: string|number]: Message<infer U>} ? {[key: string|number]: PartialMessage<U>}
   : F ;
+
+type OneofUndefined = { case: undefined, value?: undefined };
 
 type OneofSelectedMessage<K extends string, M extends Message<M>> = {
   case: K;
